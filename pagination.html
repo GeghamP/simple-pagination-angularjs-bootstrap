@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	</head>
+	<body>
+
+		<div ng-controller="myCtrl" class="container">
+			<ul>
+				<li ng-repeat="item in data | startFrom:(currentPage*pageSize) | limitTo: pageSize">
+					<a href="#">{{item}}</a>
+				</li>
+			</ul>
+			<ul class="pagination">
+				<li class="page-item">
+					<a href="#" class="btn" ng-class="{'disabled':currentPage===0}" ng-click="prevPage($event)">Prev</a>
+				</li>	
+				<li ng-repeat="page in pagearr" class="page-item" ng-class="{'active':page==currentPage+1}">
+					<a class="button" href="#" ng-click="setPage(page,$event)">{{page}}</a>
+				</li>
+				<li class="page-item">
+					<a href="#" class="btn" ng-class="{'disabled':currentPage>=numPages()-1}" ng-click="nextPage($event)">Next</a>
+				</li>	
+			</ul>
+		</div>	
+		<script>
+				var app=angular.module('myApp',[])
+				.controller('myCtrl',function($scope,$filter){
+					$scope.currentPage=0;
+					$scope.pageSize=10;
+					$scope.data=[];
+					for(var i=0;i<99;i++){
+						$scope.data.push('Item '+i);
+					}
+					$scope.numPages=function() {
+						return Math.ceil($scope.data.length / $scope.pageSize);
+					};
+					$scope.pagearr=[];
+					for(var j=0;j < $scope.numPages();j++){
+						$scope.pagearr[j]=j+1;
+					}
+					$scope.setPage=function(page,event){
+						event.preventDefault();
+						$scope.currentPage=page-1;
+					};
+					$scope.prevPage=function(event){
+						event.preventDefault();
+						$scope.currentPage=$scope.currentPage-1;
+					};
+					$scope.nextPage=function(event){
+						event.preventDefault();
+						$scope.currentPage=$scope.currentPage+1;
+					};
+				})
+				.filter('startFrom',function(){
+					return function(input,start){
+						start=+start;
+						return input.slice(start);
+					};
+				});
+				
+			</script>
+	</body>
+</html>
